@@ -1,0 +1,24 @@
+{
+  "name": "Aesthet. — Curated Collection",
+  "short_name": "Aesthet.",
+  "description": "Browse a curated collection of minimalist objects, artwork, and furniture from independent makers.",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "background_color": "#F9F8F6",
+  "theme_color": "#F9F8F6",
+  "icons": [
+    {
+      "src": "/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

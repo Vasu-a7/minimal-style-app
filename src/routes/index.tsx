@@ -1,24 +1,49 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { AppHeader } from "@/components/AppHeader";
+import { ItemCard } from "@/components/ItemCard";
+import { items } from "@/lib/items";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "Aesthet. — Curated Collection" },
+      {
+        name: "description",
+        content:
+          "Browse a curated collection of minimalist objects, artwork, and furniture from independent makers.",
+      },
+      { property: "og:title", content: "Aesthet. — Curated Collection" },
+      {
+        property: "og:description",
+        content:
+          "Browse a curated collection of minimalist objects, artwork, and furniture from independent makers.",
+      },
+    ],
+  }),
+  component: HomePage,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function HomePage() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <>
+      <AppHeader />
+      <main id="main" className="mx-auto max-w-md px-6 pb-32 pt-8">
+        <div className="mb-10">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+            Discover
+          </span>
+          <h1 className="mt-2 font-serif text-4xl">
+            Curated
+            <br />
+            Collection
+          </h1>
+        </div>
+        <div className="space-y-12">
+          {items.map((item) => (
+            <ItemCard key={item.id} item={item} />
+          ))}
+        </div>
+      </main>
+    </>
   );
 }
