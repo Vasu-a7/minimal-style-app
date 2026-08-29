@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { BottomNav } from "../components/BottomNav";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import OnboardingTour from "../components/OnboardingTour";
 
 function NotFoundComponent() {
   return (
@@ -78,21 +79,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { title: "Aesthet. — Curated Collection" },
+      { title: "Jansetu - " },
       {
         name: "description",
         content:
-          "A minimalist mobile app for browsing curated objects, artwork, and furniture from independent makers.",
+          "Connects people to government services, information, and resources in a simple and accessible way.",
       },
-      { property: "og:title", content: "Aesthet. — Curated Collection" },
+      { property: "og:title", content: "Jansetu" },
       {
         property: "og:description",
         content:
-          "A minimalist mobile app for browsing curated objects, artwork, and furniture from independent makers.",
+          "Connects people to government services, information, and resources in a simple and accessible way.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "theme-color", content: "#F9F8F6" },
+      { name: "theme-color", content: "#4F46E5" }, // <-- YAHAN COLOR UPDATE HO GAYA HAI
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },
       { name: "apple-mobile-web-app-title", content: "Aesthet." },
@@ -139,6 +140,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+      <OnboardingTour />
       <Outlet />
       <BottomNav />
     </QueryClientProvider>

@@ -1,8 +1,11 @@
 import { Link } from "@tanstack/react-router";
-import { Home, Compass, Bookmark, User, Plus } from "lucide-react";
+import { Home, LayoutDashboard, PlusCircle, User } from "lucide-react";
 
 const linkClass =
-  "flex min-h-11 min-w-11 flex-col items-center justify-center gap-1 transition-opacity";
+  "flex min-h-14 min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-xl px-1 text-[10px] font-semibold transition-colors";
+
+const inactiveClass = `${linkClass} text-muted-foreground hover:bg-muted hover:text-foreground`;
+const activeClass = `${linkClass} bg-primary/10 text-primary`;
 
 export function BottomNav() {
   return (
@@ -10,55 +13,50 @@ export function BottomNav() {
       aria-label="Primary"
       className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/95 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-3 backdrop-blur-lg"
     >
-      <div className="mx-auto flex max-w-md items-center justify-between px-8">
+      <div className="mx-auto flex max-w-md items-center gap-1 px-3">
         <Link
           to="/"
-          aria-label="Home"
-          className={linkClass}
+          aria-label="Feed"
+          className={`${linkClass} tour-feed`}
           activeOptions={{ exact: true }}
-          activeProps={{ className: `${linkClass} text-foreground` }}
-          inactiveProps={{ className: `${linkClass} text-foreground/40 hover:text-foreground/70` }}
+          activeProps={{ className: activeClass }}
+          inactiveProps={{ className: inactiveClass }}
         >
           <Home className="size-5" strokeWidth={1.75} aria-hidden />
-          <span className="text-[9px] font-bold uppercase tracking-tighter">Home</span>
+          <span>Feed</span>
         </Link>
+        
         <Link
-          to="/explore"
-          aria-label="Explore"
-          className={linkClass}
-          activeProps={{ className: `${linkClass} text-foreground` }}
-          inactiveProps={{ className: `${linkClass} text-foreground/40 hover:text-foreground/70` }}
+          to="/report"
+          aria-label="Report an issue"
+          className={`${linkClass} tour-report`}
+          activeProps={{ className: activeClass }}
+          inactiveProps={{ className: inactiveClass }}
         >
-          <Compass className="size-5" strokeWidth={1.75} aria-hidden />
-          <span className="text-[9px] font-bold uppercase tracking-tighter">Explore</span>
+          <PlusCircle className="size-5" strokeWidth={1.75} aria-hidden />
+          <span>Report Issue</span>
         </Link>
+        
         <Link
-          to="/profile"
-          aria-label="Create a new curation"
-          className="flex min-h-11 items-center rounded-full bg-primary px-5 text-primary-foreground"
+          to="/workspace"
+          aria-label="Open workspace"
+          className={`${linkClass} tour-workspace`}
+          activeProps={{ className: activeClass }}
+          inactiveProps={{ className: inactiveClass }}
         >
-          <Plus className="mr-1 size-4" strokeWidth={2} aria-hidden />
-          <span className="text-xs font-semibold tracking-wide">Create</span>
+          <LayoutDashboard className="size-5" strokeWidth={1.75} aria-hidden />
+          <span>Workspace</span>
         </Link>
-        <Link
-          to="/saved"
-          aria-label="Saved items"
-          className={linkClass}
-          activeProps={{ className: `${linkClass} text-foreground` }}
-          inactiveProps={{ className: `${linkClass} text-foreground/40 hover:text-foreground/70` }}
-        >
-          <Bookmark className="size-5" strokeWidth={1.75} aria-hidden />
-          <span className="text-[9px] font-bold uppercase tracking-tighter">Saved</span>
-        </Link>
+        
         <Link
           to="/profile"
           aria-label="Profile"
           className={linkClass}
-          activeProps={{ className: `${linkClass} text-foreground` }}
-          inactiveProps={{ className: `${linkClass} text-foreground/40 hover:text-foreground/70` }}
+          activeProps={{ className: activeClass }}
+          inactiveProps={{ className: inactiveClass }}
         >
           <User className="size-5" strokeWidth={1.75} aria-hidden />
-          <span className="text-[9px] font-bold uppercase tracking-tighter">Profile</span>
+          <span>Profile</span>
         </Link>
       </div>
     </nav>
