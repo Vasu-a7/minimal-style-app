@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ArrowRight, CircleDot, LoaderCircle } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
 import { supabase } from "@/integrations/supabase/client";
+import AnalyticsView from "./AnalyticsView";
 
 type BoardStatus = "open" | "under_review" | "active";
 type Challenge = Tables<"challenges">;
@@ -26,6 +27,7 @@ function formatStatus(status: BoardStatus) {
 }
 
 export function KanbanView() {
+  const [activeTab, setActiveTab] = useState<"kanban" | "analytics">("kanban");
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
@@ -90,107 +92,139 @@ export function KanbanView() {
 
   return (
     <section className="mx-auto w-full max-w-7xl px-5 py-8 sm:py-10">
-      <header className="mb-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-          Team workspace
-        </p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
-          Move community work forward.
-        </h1>
-        <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
-          Review incoming challenges and keep active initiatives moving across your team.
-        </p>
+      <header className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+            Team workspace
+          </p>
+          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
+            Move community work forward.
+          </h1>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
+            Review incoming challenges and monitor government analytics across districts.
+          </p>
+        </div>
+
+        {/* Tab Navigation for SIH Prototype */}
+        <div className="flex shrink-0 rounded-xl bg-muted/50 p-1">
+          <button
+            onClick={() => setActiveTab("kanban")}
+            className={`rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
+              activeTab === "kanban"
+                ? "bg-background text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Kanban Board
+          </button>
+          <button
+            onClick={() => setActiveTab("analytics")}
+            className={`rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
+              activeTab === "analytics"
+                ? "bg-background text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Govt Analytics
+          </button>
+        </div>
       </header>
 
-      {errorMessage && (
-        <p
-          role="alert"
-          className="mb-5 rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive"
-        >
-          {errorMessage}
-        </p>
-      )}
-
-      {isLoading ? (
-        <div className="grid gap-4 lg:grid-cols-3" aria-label="Loading workspace">
-          {boardColumns.map((column) => (
-            <div key={column.status} className="min-h-64 animate-pulse rounded-2xl bg-muted/60" />
-          ))}
-        </div>
+      {activeTab === "analytics" ? (
+        <AnalyticsView />
       ) : (
-        <div className="grid gap-4 overflow-x-auto lg:grid-cols-3">
-          {boardColumns.map((column) => {
-            const columnChallenges = challenges.filter(
-              (challenge) => challenge.status === column.status,
-            );
-            const targetStatus = nextStatus[column.status];
+        <>
+          {errorMessage && (
+            <p
+              role="alert"
+              className="mb-5 rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive"
+            >
+              {errorMessage}
+            </p>
+          )}
 
-            return (
-              <section
-                key={column.status}
-                className="min-w-0 rounded-2xl border border-border bg-muted/30 p-3"
-              >
-                <div className="flex items-start justify-between gap-3 px-2 pb-3">
-                  <div>
-                    <h2 className="text-sm font-semibold text-foreground">{column.label}</h2>
-                    <p className="mt-1 text-xs text-muted-foreground">{column.description}</p>
-                  </div>
-                  <span className="rounded-full bg-background px-2.5 py-1 text-xs font-semibold text-muted-foreground">
-                    {columnChallenges.length}
-                  </span>
-                </div>
+          {isLoading ? (
+            <div className="grid gap-4 lg:grid-cols-3" aria-label="Loading workspace">
+              {boardColumns.map((column) => (
+                <div key={column.status} className="min-h-64 animate-pulse rounded-2xl bg-muted/60" />
+              ))}
+            </div>
+          ) : (
+            <div className="grid gap-4 overflow-x-auto lg:grid-cols-3">
+              {boardColumns.map((column) => {
+                const columnChallenges = challenges.filter(
+                  (challenge) => challenge.status === column.status,
+                );
+                const targetStatus = nextStatus[column.status];
 
-                <div className="space-y-3">
-                  {columnChallenges.length === 0 && (
-                    <p className="rounded-xl border border-dashed border-border px-3 py-6 text-center text-xs text-muted-foreground">
-                      No challenges here yet.
-                    </p>
-                  )}
-                  {columnChallenges.map((challenge) => (
-                    <article
-                      key={challenge.id}
-                      className="rounded-xl border border-border bg-card p-4 shadow-sm"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <CircleDot className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden />
-                        <span className="rounded-full bg-primary/10 px-2 py-1 text-[11px] font-semibold text-primary">
-                          {challenge.category}
-                        </span>
+                return (
+                  <section
+                    key={column.status}
+                    className="min-w-0 rounded-2xl border border-border bg-muted/30 p-3"
+                  >
+                    <div className="flex items-start justify-between gap-3 px-2 pb-3">
+                      <div>
+                        <h2 className="text-sm font-semibold text-foreground">{column.label}</h2>
+                        <p className="mt-1 text-xs text-muted-foreground">{column.description}</p>
                       </div>
-                      <h3 className="mt-3 text-sm font-semibold leading-5 text-card-foreground">
-                        {challenge.title}
-                      </h3>
-                      <p className="mt-2 text-xs text-muted-foreground">
-                        {formatStatus(challenge.status)}
-                      </p>
-                      {targetStatus ? (
-                        <button
-                          type="button"
-                          onClick={() => void moveChallenge(challenge)}
-                          disabled={updatingId !== null}
-                          className="mt-4 inline-flex min-h-9 w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
-                        >
-                          {updatingId === challenge.id ? (
-                            <LoaderCircle className="size-3.5 animate-spin" aria-hidden />
-                          ) : (
-                            <ArrowRight className="size-3.5" aria-hidden />
-                          )}
-                          {updatingId === challenge.id
-                            ? "Moving..."
-                            : `Move to ${formatStatus(targetStatus)}`}
-                        </button>
-                      ) : (
-                        <p className="mt-4 text-center text-xs font-medium text-muted-foreground">
-                          Latest workflow stage
+                      <span className="rounded-full bg-background px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                        {columnChallenges.length}
+                      </span>
+                    </div>
+
+                    <div className="space-y-3">
+                      {columnChallenges.length === 0 && (
+                        <p className="rounded-xl border border-dashed border-border px-3 py-6 text-center text-xs text-muted-foreground">
+                          No challenges here yet.
                         </p>
                       )}
-                    </article>
-                  ))}
-                </div>
-              </section>
-            );
-          })}
-        </div>
+                      {columnChallenges.map((challenge) => (
+                        <article
+                          key={challenge.id}
+                          className="rounded-xl border border-border bg-card p-4 shadow-sm"
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <CircleDot className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden />
+                            <span className="rounded-full bg-primary/10 px-2 py-1 text-[11px] font-semibold text-primary">
+                              {challenge.category}
+                            </span>
+                          </div>
+                          <h3 className="mt-3 text-sm font-semibold leading-5 text-card-foreground">
+                            {challenge.title}
+                          </h3>
+                          <p className="mt-2 text-xs text-muted-foreground">
+                            {formatStatus(challenge.status)}
+                          </p>
+                          {targetStatus ? (
+                            <button
+                              type="button"
+                              onClick={() => void moveChallenge(challenge)}
+                              disabled={updatingId !== null}
+                              className="mt-4 inline-flex min-h-9 w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                              {updatingId === challenge.id ? (
+                                <LoaderCircle className="size-3.5 animate-spin" aria-hidden />
+                              ) : (
+                                <ArrowRight className="size-3.5" aria-hidden />
+                              )}
+                              {updatingId === challenge.id
+                                ? "Moving..."
+                                : `Move to ${formatStatus(targetStatus)}`}
+                            </button>
+                          ) : (
+                            <p className="mt-4 text-center text-xs font-medium text-muted-foreground">
+                              Latest workflow stage
+                            </p>
+                          )}
+                        </article>
+                      ))}
+                    </div>
+                  </section>
+                );
+              })}
+            </div>
+          )}
+        </>
       )}
     </section>
   );
